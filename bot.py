@@ -154,13 +154,6 @@ async def randomcat(interaction: discord.Interaction):
         logger.error(f"Failed to get cat picture: {e}")
         await interaction.followup.send("Failed to get cat picture", ephemeral=True)
 
-@bot.tree.command(name='tags', description='See a list of available cat picture tags')
-async def tags(interaction: discord.Interaction):
-    logger.info("Getting cat picture tags")
-    embed = discord.Embed(title="Cat Picture Tags", description=f"Due to Discord's limitations, it is not possible to display all the tags in a single message. You can still check the list of avalable tags on this URL: {API_URL}/api/tags", color=discord.Color.green())
-    await interaction.response.send_message(embed=embed)
-
-
 @bot.tree.command(name='customcat', description='Get a cat picture with advanced options')
 @discord.app_commands.describe(
     width='The picture width',
@@ -292,6 +285,14 @@ async def customcat(
     except Exception as e:
         logger.error(f"Failed to get custom cat picture: {e}")
         await interaction.followup.send("Failed to get cat picture", ephemeral=True)
+
+@bot.tree.command(name='tags', description='See a list of available cat picture tags')
+async def tags(interaction: discord.Interaction):
+    logger.info("Getting cat picture tags")
+    embed = discord.Embed(title="Cat Picture Tags", description=f"Due to Discord's limitations, it is not possible to display all the tags in a single message. You can still check the list of avalable tags on this URL: {API_URL}/api/tags", color=discord.Color.green())
+    await interaction.response.send_message(embed=embed)
+
+
 
 if __name__ == "__main__":
     bot.run(TOKEN)
