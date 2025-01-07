@@ -154,12 +154,18 @@ async def randomcat(interaction: discord.Interaction):
         logger.error(f"Failed to get cat picture: {e}")
         await interaction.followup.send("Failed to get cat picture", ephemeral=True)
 
+@bot.tree.command(name='tags', description='See a list of available cat picture tags')
+async def tags(interaction: discord.Interaction):
+    logger.info("Getting cat picture tags")
+    embed = discord.Embed(title="Cat Picture Tags", description=f"Due to Discord's limitations, it is not possible to display all the tags in a single message. You can still check the list of avalable tags on this URL: {API_URL}/api/tags", color=discord.Color.green())
+    await interaction.response.send_message(embed=embed)
+
+
 @bot.tree.command(name='customcat', description='Get a cat picture with advanced options')
 @discord.app_commands.describe(
-    type='The type of cat picture (PNG, GIF)',
     width='The picture width',
     height='The picture height',
-    filter='The picture filter (Mono, Negative, Custom)',
+    filter='The picture filter',
     blur='The picture blur (0-10)',
     brightness='The picture brightness (0-100)',
     saturation='The picture saturation (0-100)',
@@ -169,9 +175,13 @@ async def randomcat(interaction: discord.Interaction):
     green='The picture green (0-255)',
     blue='The picture blue (0-255)'
 )
+@discord.app_commands.choices(filter=[
+    discord.app_commands.Choice(name='Mono', value='mono'),
+    discord.app_commands.Choice(name='Negative', value='negate'),
+    discord.app_commands.Choice(name='Custom', value='custom')
+])
 async def customcat(
     interaction: discord.Interaction, 
-    type: str = None,
     width: int = None,
     height: int = None,
     filter: str = None,
