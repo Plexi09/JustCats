@@ -309,7 +309,6 @@ async def catfact(interaction: discord.Interaction):
         fact = fact.replace("\\", "")
         logger.info(f"Cat fact: {fact}")
         embed = discord.Embed(title="Random Cat Fact", description=fact, color=discord.Color.green())
-        embed.add_field(name="Source", value="catfact.ninja")
     except Exception as e:
         logger.error(f"Failed to get cat fact: {e}")
         embed = discord.Embed(title="Error", description="Failed to get cat fact", color=discord.Color.red())
