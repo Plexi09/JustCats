@@ -152,7 +152,10 @@ async def randomcat(interaction: discord.Interaction):
         
     except Exception as e:
         logger.error(f"Failed to get cat picture: {e}")
+        embed.add_field(name="Error", value=str(e))
+        embed.set_footer(text=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         await interaction.followup.send("Failed to get cat picture", ephemeral=True)
+        
 
 @bot.tree.command(name='customcat', description='Get a cat picture with advanced options')
 @discord.app_commands.describe(
@@ -278,13 +281,16 @@ async def customcat(
             embed.add_field(name="⚙️ Parameters Used", value=f"```\n{param_text}\n```", inline=False)
         
         # Send both the file and embed
-        await interaction.followup.send(file=file, embed=embed)
         logger.info(f"Custom cat picture sent with parameters: {param_text}")
         logger.info(f"Image URL: {image_url}")
         
     except Exception as e:
         logger.error(f"Failed to get custom cat picture: {e}")
-        await interaction.followup.send("Failed to get cat picture", ephemeral=True)
+        embed = discord.Embed(title="Error", description="Failed to get custom cat picture", color=discord.Color.red())
+        embed.add_field(name="Error", value=str(e))
+        embed.set_footer(text=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    
+    await interaction.response.send_message(embed=embed)
 
 @bot.tree.command(name='tags', description='See a list of available cat picture tags')
 async def tags(interaction: discord.Interaction):
@@ -292,7 +298,24 @@ async def tags(interaction: discord.Interaction):
     embed = discord.Embed(title="Cat Picture Tags", description=f"Due to Discord's limitations, it is not possible to display all the tags in a single message. You can still check the list of avalable tags on this URL: {API_URL}/api/tags", color=discord.Color.green())
     await interaction.response.send_message(embed=embed)
 
-
+@bot.tree.command(name='catfact', description='Get a random cat fact')
+async def catfact(interaction: discord.Interaction):
+    logger.info("Getting a random cat fact")
+    headers = {'accept': 'application/json','X-CSRF-TOKEN': 'pzCNCgT721DJeWnxzyglkrpnQCV0jeeRFgBVbkAo',}
+    try:
+        response = requests.get('https://catfact.ninja/fact', headers=headers)
+        data = response.json()
+        fact = data.get("fact", "N/A")
+        fact = fact.replace("\\", "")
+        logger.info(f"Cat fact: {fact}")
+        embed = discord.Embed(title="Random Cat Fact", description=fact, color=discord.Color.green())
+        embed.add_field(name="Source", value="catfact.ninja")
+    except Exception as e:
+        logger.error(f"Failed to get cat fact: {e}")
+        embed = discord.Embed(title="Error", description="Failed to get cat fact", color=discord.Color.red())
+        embed.add_field(name="Error", value=str(e))
+        
+    await interaction.response.send_message(embed=embed)
 
 if __name__ == "__main__":
     bot.run(TOKEN)
